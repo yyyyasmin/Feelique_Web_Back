@@ -1,8 +1,8 @@
 ### Alle Moods abrufen (GET)
-GET https://webtech-feelique-backend.onrender.com/moods
+GET https://feelique-back.onrender.com/moods
 
 ### Neuen Mood erstellen (POST)
-POST https://webtech-feelique-backend.onrender.com/moods
+POST https://feelique-back.onrender.com/moods
 Content-Type: application/json
 
 {
@@ -11,4 +11,4 @@ Content-Type: application/json
 }
 
 ### Einen bestimmten Mood abrufen (GET by ID)
-GET https://webtech-feelique-backend.onrender.com/moods/1
+GET https://feelique-back.onrender.com/moods/1
