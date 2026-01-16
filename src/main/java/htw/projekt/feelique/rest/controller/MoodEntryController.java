@@ -2,8 +2,7 @@ package htw.projekt.feelique.rest.controller;
 
 import htw.projekt.feelique.business.service.MoodEntryService;
 import htw.projekt.feelique.rest.model.MoodEntry;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -16,9 +15,18 @@ public class MoodEntryController {
         this.moodEntryService = moodEntryService;
     }
 
-
     @GetMapping("/moods")
-    public List<MoodEntry> getMoodEntries() {
+    public List<MoodEntry> getAllMoods() {
         return moodEntryService.getAllMoods();
+    }
+
+    @PostMapping("/moods")
+    public MoodEntry createMood(@RequestBody MoodEntry moodEntry) {
+        return moodEntryService.saveMood(moodEntry);
+    }
+
+    @GetMapping("/moods/{id}")
+    public MoodEntry getMoodById(@PathVariable Long id) {
+        return moodEntryService.getMoodById(id);
     }
 }
