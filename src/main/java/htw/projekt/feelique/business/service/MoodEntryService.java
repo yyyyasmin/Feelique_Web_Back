@@ -28,4 +28,12 @@ public class MoodEntryService {
         return repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Mood not found with id: " + id));
     }
+
+    public void deleteMood(Long id) {
+        if (!repository.existsById(id)) {
+            throw new RuntimeException("Mood not found with id: " + id);
+        }
+        repository.deleteById(id);
+    }
+
 }

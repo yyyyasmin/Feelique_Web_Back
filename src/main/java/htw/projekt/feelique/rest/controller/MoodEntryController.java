@@ -29,4 +29,9 @@ public class MoodEntryController {
     public MoodEntry getMoodById(@PathVariable Long id) {
         return moodEntryService.getMoodById(id);
     }
+
+    @DeleteMapping("/moods/{id}")
+    public void deleteMood(@PathVariable Long id) {
+        moodEntryService.deleteMood(id);
+    }
 }
