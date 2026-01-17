@@ -1,10 +1,6 @@
 package htw.projekt.feelique.rest.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -17,15 +13,12 @@ public class MoodEntry {
     private String mood;
     private LocalDateTime time;
     private String note;
-    // Leerer Konstruktor (wird von Hibernate benötigt)
-    public MoodEntry() {}
 
-    // Konstruktor mit Parametern (für deine Logik)
-    public MoodEntry(String mood, LocalDateTime time) {
-        this.mood = mood;
-        this.time = time;
-        this.note = note;
-    }
+    @Column(name = "user_id")
+    private Long userId;
+
+    // Leerer Konstruktor (für Hibernate)
+    public MoodEntry() {}
 
     // Getter und Setter
     public Long getId() {
@@ -58,5 +51,13 @@ public class MoodEntry {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }

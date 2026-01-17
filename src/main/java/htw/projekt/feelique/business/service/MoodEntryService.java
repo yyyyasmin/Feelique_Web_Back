@@ -4,8 +4,8 @@ import htw.projekt.feelique.business.repository.MoodEntryRepository;
 import htw.projekt.feelique.rest.model.MoodEntry;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MoodEntryService {
@@ -36,4 +36,13 @@ public class MoodEntryService {
         repository.deleteById(id);
     }
 
+    // NEU: Einträge für einen bestimmten User
+    public List<MoodEntry> getEntriesForUser(Long userId) {
+        return repository.findByUserId(userId);
+    }
+
+    // NEU: Eintrag per ID holen (für DELETE-Check)
+    public Optional<MoodEntry> getEntryById(Long id) {
+        return repository.findById(id);
+    }
 }
