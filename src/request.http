@@ -16,3 +16,8 @@ GET https://feelique-back.onrender.com/moods/1
 ### Einen bestimmten Mood löschen (DELETE by ID)
 DELETE https://feelique-back.onrender.com/moods/9
 
+
+
+
+
+

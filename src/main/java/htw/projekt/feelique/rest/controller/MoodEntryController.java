@@ -6,6 +6,8 @@ import htw.projekt.feelique.rest.model.MoodEntry;
 import htw.projekt.feelique.rest.model.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import htw.projekt.feelique.rest.model.MoodStatsDto;
+import java.time.format.DateTimeFormatter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -62,15 +64,15 @@ public class MoodEntryController {
             return ResponseEntity.badRequest().body("Du kannst keine Moods für die Zukunft eintragen!");
         }
 
-        // Prüfen, ob heute schon ein Eintrag existiert
+        // KORREKTUR: Prüfen, ob für DAS EINGEGEBENE Datum schon ein Eintrag existiert
         List<MoodEntry> existingMoods = moodEntryService.getEntriesForUser(user.getId());
-        String today = LocalDate.now().toString();
+        LocalDate entryDate = entry.getTime().toLocalDate(); // Das Datum aus dem Request
 
         boolean alreadyExists = existingMoods.stream()
-                .anyMatch(e -> e.getTime().toLocalDate().toString().equals(today));
+                .anyMatch(e -> e.getTime().toLocalDate().equals(entryDate));
 
         if (alreadyExists) {
-            return ResponseEntity.badRequest().body("Du hast heute bereits einen Mood eingetragen!");
+            return ResponseEntity.badRequest().body("Für dieses Datum existiert bereits ein Eintrag!");
         }
 
         entry.setUserId(user.getId());
@@ -127,5 +129,36 @@ public class MoodEntryController {
             }
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+    // GET: Statistik der Moods für eingeloggten User
+// Optional: ?from=2026-01-01&to=2026-01-31
+    @GetMapping("/stats")
+    public ResponseEntity<?> getMoodStats(
+            @RequestHeader("X-Session-Token") String token,
+            @RequestParam(required = false) String from,
+            @RequestParam(required = false) String to
+    ) {
+        User user = authService.authenticate(token);
+        if (user == null) {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        LocalDate fromDate = null;
+        LocalDate toDate = null;
+
+        try {
+            DateTimeFormatter fmt = DateTimeFormatter.ISO_LOCAL_DATE;
+            if (from != null && !from.isBlank()) {
+                fromDate = LocalDate.parse(from, fmt);
+            }
+            if (to != null && !to.isBlank()) {
+                toDate = LocalDate.parse(to, fmt);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Invalid date format. Use YYYY-MM-DD.");
+        }
+
+        List<MoodStatsDto> stats = moodEntryService.getMoodStatsForUser(user.getId(), fromDate, toDate);
+        return ResponseEntity.ok(stats);
     }
 }

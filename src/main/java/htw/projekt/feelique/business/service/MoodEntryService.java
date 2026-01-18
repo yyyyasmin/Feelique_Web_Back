@@ -9,6 +9,10 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.time.LocalDate;
+import java.util.Map;
+import java.util.stream.Collectors;
+import htw.projekt.feelique.rest.model.MoodStatsDto;
 
 @Service
 public class MoodEntryService {
@@ -65,5 +69,34 @@ public class MoodEntryService {
         entry.setNote(note);
 
         return repository.save(entry);
+    }
+
+    public List<MoodStatsDto> getMoodStatsForUser(Long userId, LocalDate from, LocalDate to) {
+        // Alle Einträge des Users holen
+        List<MoodEntry> entries = getEntriesForUser(userId);
+
+        // Optionalen Zeitraum anwenden
+        if (from != null || to != null) {
+            entries = entries.stream().filter(e -> {
+                LocalDate date = e.getTime().toLocalDate();
+                if (from != null && date.isBefore(from)) {
+                    return false;
+                }
+                if (to != null && date.isAfter(to)) {
+                    return false;
+                }
+                return true;
+            }).collect(Collectors.toList());
+        }
+
+        // Gruppieren nach Mood und zählen
+        Map<String, Long> grouped = entries.stream()
+                .collect(Collectors.groupingBy(MoodEntry::getMood, Collectors.counting()));
+
+        // In DTO-Liste umwandeln
+        return grouped.entrySet().stream()
+                .map(e -> new MoodStatsDto(e.getKey(), e.getValue()))
+                .sorted((a, b) -> Long.compare(b.getCount(), a.getCount())) // absteigend nach Häufigkeit
+                .collect(Collectors.toList());
     }
 }
